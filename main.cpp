@@ -228,7 +228,7 @@ int main() {
     int dineroEnCaja = inversion, isbn = 1000;
 
     while (true) {
-        circuitBreaker.checkEstado(numTransaccion, dineroEnCaja);
+        circuitBreaker.checkEstado(catalogo.libros[1].numTransacciones, dineroEnCaja);
         cout << "\t\t\t\tBIENVENIDO\n" << "Dinero: $" << dineroEnCaja << endl;
         cout << "\t1. Registrar un libro en el catalogo" << endl;
         cout << "\t2. Eliminar un libro del catálogo" << endl;
