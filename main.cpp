@@ -1,265 +1,404 @@
-#include <stdlib.h>
-#include <iostream>
+##include <iostream>
+#include <string>
+#include <chrono>
+
 using namespace std;
 
-class info{
-	public:
-		int ISBN;
-		string title;
-		int total_amount;
-		int sell;
-		int buy;
-		int value_buy;
-		int value_sell;
-		
-		info (){
-			ISBN = 10000;
-			title = "none";
-			value_buy = 8000;
-			value_sell = 10000;
-			total_amount = 0;
-			sell = 0;
-			buy = 0;
-		}
-		
-		void crear (int ISBN_number, string name, int num_buy, int num_sell){
-			ISBN = ISBN_number;
-			title = name;
-			value_buy = num_buy;
-			value_sell = num_sell;
-			total_amount = 1;
-		}
-		
-		virtual void details (){
-			cout << "ID: " << ISBN << endl;
-			cout << "TITULO: " << title << endl;
-			cout << "CANTIDAD: " << total_amount << endl;
-			cout << "VALOR DE VENTA: " << sell << endl;
-			cout << "VALOR DE COMPRA: " << buy << endl;
-		}
-		
+int inversion = 1000000;
+
+class Transaccion {
+public:
+    int tipo;
+    int cantidad;
+    string fecha;
+
+    Transaccion() {
+        tipo = 1;
+        cantidad = 1;
+        auto now = chrono::system_clock::now();
+        auto now_c = chrono::system_clock::to_time_t(now);
+        fecha = ctime(&now_c);
+    }
+
+    Transaccion(int tipo, int cantidad) {
+        this->tipo = tipo;
+        this->cantidad = cantidad;
+        auto now = chrono::system_clock::now();
+        auto now_c = chrono::system_clock::to_time_t(now);
+        this->fecha = ctime(&now_c);
+    }
 };
 
-class book: public info {
-	public:
-		
-		void details (int& total_cash){
-			cout << "ID: " << ISBN << endl;
-			cout << "TITULO: " << title << endl;
-			cout << "CANTIDAD: " << total_amount << endl;
-			cout << "VALOR DE VENTA: " << value_sell << endl;
-			cout << "VALOR DE COMPRA: " << value_buy << endl;
-			cout << "CANTIDAD VENDIDA: " << sell << endl;
-			cout << "CANTIDAD COMPRADA:" << buy << endl;
-			
-			int select;
-				cout << "Desea realizar alguna compra o venta" << "\n1. SI" << "\n2. NO"<< endl;
-				cin >> select;
-			
-					if (select == 1){
-						cout << "comprar (1) o vender (2)" << endl;
-						 	cin >> select;
-						 		if ( select == 1){
-						 			menu_buy(total_cash);
-						 		} else if(select == 2){
-								 menu_sell(total_cash);
-								}
-						 			
-					}
-		}
-		
-		void menu_sell(int& total_cash){
-			int amount_sell;
-			bool control = true;
-			
-				while (control){
-				
-					cout << "Cuantos libros quiere vender" << endl;
-					cin >> amount_sell;
-				
-						if (amount_sell > 0) {
-							control = false;
-							book_sell(amount_sell, total_cash);							
-						}
-				}
-		}
-		
-		void menu_buy(int& total_cash){
-			int amount_buy;
-			bool control = true;
-			
-				while (control){
-				
-					cout << "Cuantos libros quiere comprar" << endl;
-					cin >> amount_buy;
-				
-						if (amount_buy > 0) {
-							control = false;
-							book_buy(amount_buy, total_cash);							
-						}
-				}
-		}
-		
-		void book_sell(int amount_sell, int& total_cash){
-			for(int i = 1; i <= amount_sell; i++){
-				total_cash += value_sell;
-			}
-			
-			sell += amount_sell;
-			total_amount -= amount_sell; 
-			
-			cout << total_cash << endl;
-			
-		}
-		
-		void book_buy(int amount_buy, int& total_cash){
-			for(int i = 1; i <= amount_buy; i++){
-				total_cash -= value_buy;
-			}
-			
-			buy += amount_buy;
-			total_amount += amount_buy;
-			
-			cout << total_cash << endl;
-			
-		}
-		
-		
-		
+class info_libro {
+    public: 
+        int isbn;
+        string titulo;
+        int precioCompra;
+        int precioVenta;
+      
+    virtual void mostrarInfo() = 0; 
 };
 
-
-int select, search, salir, ID, number_sell, number_buy, isbn_delete, delete_confirm, position, book_select, new_book = 1, new_isbn = 10001;
-string word, title_name;
-bool verify, notFound = true;
-
-int main()
-{
-	int total_cash = 1000000;
-	book* libro = new book[1000];
-	
-	
-	do {
-	
-	cout << "\t\t\tBIENVENIDO\n\n" << "Dinero disponible: " << total_cash << "\n\n\t1.Buscar Libro\n" << "\t2.Agregar Libro\n" << "\t3.Eliminar Libro\n" << "\t4.Filtro\n" << "\t5.Catalogo Completo" << endl;
-	cin >>select;
-	system("cls");
-	switch (select){
-		
-		case 1:	
-			cout << "Buscar libro por: \n" << "\t1.Titulo \n" << "\t2.ISBN" << endl;
-			cin >> search;
-			system("cls");
-			
-				if (search == 1){
-					cout << "\tEscriba el titulo del libro" << endl;
-					cin >> word;
-								 
-						for (int i = 1; i <= 100; i++ ){
-							if ( word == libro[i].title)			
-								cout << i << ". " << libro[i].title << endl;
-						}
-						
-							cin >> book_select;
-							libro[book_select].details(total_cash);
-							
-
-				} else if (search == 2){
-					cout << "\t\tEscriba el ISBN del libro" << endl;
-					cin >> ID;
-							 
-						for (int i = 1; i <= 100; i++ ){
-							if ( ID == libro[i].ISBN)
-								cout << "\t" << i << ". " << libro[i].title << endl;					
-						}
-						
-							cin >> book_select;
-							libro[book_select].details(total_cash);								
-				} 
-			system("pause");
-			system("cls");
-		break;
-		
-		case 2:
-			
-			do {
-				verify = false;
-				cout << "\tIntroduzca el titulo del libro (usar '_' para los espacios entre palabras)" << endl;
-				cin >> title_name;
-				
-				cout << "\tDigite el valor de compra" << endl;
-				cin >> number_buy;
-				
-				cout << "\tDigite el valor de venta" << endl;
-				cin >> number_sell;
-				
-					if ( number_sell < number_buy || number_buy <= 0 || number_sell <= 0){
-						verify = true;
-						cout << "\t\tResgistro invalido" << endl;
-					}
-				
-			} while(verify == true);
-				
-				libro[new_book].crear(new_isbn, title_name, number_buy, number_sell);
-				cout << "\t\tresgistro exitoso" << endl;
-				new_book++;
-				new_isbn++;
-	
-			system ("pause");
-			system ("cls");
-		break;
-		
-		case 3:
-			
-			cout << "\tDigite el ISBN del libro a eliminar" << endl;
-			cin >> isbn_delete;
-				
-					for (int i = 1; i <= 100; i++ ){
-							if ( isbn_delete == libro[i].ISBN){
-								position = i;
-								cout << "Quiere eliminar el libro " << libro[i].title << "\n\t-SI" << "\n\t-NO" << endl;
-								cin >> delete_confirm;
-									
-									if (delete_confirm == 1){
-										for (int i = position; i < 100; i++){
-											libro[i] = libro[i+1];
-										}
-										
-											cout << "t\t\t\tEliminacion exitosa" << endl;
-											notFound = false;
-									} else {
-										cout << "\t\t\tEliminacion cancelada" << endl;
-										notFound = false;
-									}
-										
-							}											
-					}
-					if (notFound){
-						cout << "\t\tLibro no encontrado" << endl;
-					}
-				
-			system("pause");
-			system("cls");			
-		break;		
-		case 4:
-		break;
-		
-		case 5:
-			for (int i = 1; i <= 100; i++){
-				cout << "-" << libro[i].title << endl; 
-			}
-				system("pause");
-				system("cls");
-		break;
-	}
+class Libro : public info_libro {
+public:
+    int cantidadActual;
+    int cantidadVendida;
+    int cantidadComprada;
+    int numTransacciones;
+    Transaccion transacciones[100];
     
-	 
+    Libro(){
+	    isbn = 1000;
+	    titulo = "none";
+	    precioCompra = 10000;
+	    precioVenta = 8000;
+	    cantidadActual = 0;
+		cantidadVendida = 0;
+		cantidadComprada = 0;
+	    numTransacciones = 0;
+	}
+
+	Libro(int isbn, const string& titulo, int precioCompra, int precioVenta){
+	    this->isbn = isbn;
+	    this->titulo = titulo;
+	    this->precioCompra = precioCompra;
+	    this->precioVenta = precioVenta;
+	    this->cantidadActual = 0;
+	    this->cantidadVendida = 0;
+		this->cantidadComprada = 0;
+	    this->numTransacciones = 0;
+	}
+
+    void abastecer(int cantidad, int& inversion) {
+        if (numTransacciones < 100) {
+            cantidadActual += cantidad;
+            transacciones[numTransacciones++] = Transaccion(2, cantidad);
+        	inversion -= precioCompra * cantidad;
+            cantidadComprada += cantidad;
+        }
+    }
+
+    bool vender(int cantidad, int& inversion) {
+        if (cantidadActual >= cantidad && numTransacciones < 100) {
+            cantidadActual -= cantidad;
+            transacciones[numTransacciones++] = Transaccion(1, cantidad);
+            inversion += precioVenta * cantidad;
+            cantidadVendida += cantidad;
+            return true;
+        }
+        return false;
+    }
+
+    int numAbastecimientos() const {
+        int num = 0;
+        for (int i = 0; i < numTransacciones; i++) {
+            if (transacciones[i].tipo == 2) {
+                num++;
+            }
+        }
+        return num;
+    }
+
+    double calcularGanancias() const {
+        double ganancias = 0.0;
+        for (int i = 0; i < numTransacciones; i++) {
+            if (transacciones[i].tipo == 1) {
+                ganancias += (transacciones[i].cantidad * precioVenta) - (transacciones[i].cantidad * precioCompra);
+            }
+        }
+        return ganancias;
+    }
+
+    void mostrarInfo() override {
+        cout << "\t\tISBN: " << isbn << endl;
+        cout << "\t\tTítulo: " << titulo << endl;
+        cout << "\t\tPrecio de Compra: $" << precioCompra << endl;
+        cout << "\t\tPrecio de Venta: $" << precioVenta << endl;
+        cout << "\t\tCantidad Actual: " << cantidadActual << endl;
+        cout << "\t\tTransacciones de Abastecimiento: " << numAbastecimientos() << endl;
+        cout << "\t\tGanancias totales: $" << calcularGanancias() << endl;
+    }
+};
+
+class Catalogo {
+public:
+    Libro libros[100];
+    int numLibros;
+    
+    Catalogo() {
+        numLibros = 0;
+    }
+
+
+    void agregarLibro(Libro& libro) {
+        if (numLibros < 100) {
+            libros[numLibros] = libro;
+            numLibros++;
+        }
+    }
+
+    void eliminarLibro(int isbn) {
+        for (int i = 0; i < numLibros; i++) {
+            if (libros[i].isbn == isbn) {
+                for (int j = i; j < numLibros - 1; j++) {
+                    libros[j] = libros[j + 1];
+                }
+                numLibros--;
+                break;
+            }
+        }
+    }
+
+    Libro* buscarPorTitulo(string& titulo) {
+        for (int i = 0; i < numLibros; i++) {
+            if (libros[i].titulo == titulo) {
+                return &libros[i];
+            }
+        }
+        return 0;
+    }
+
+    Libro* buscarPorISBN(int isbn) {
+        for (int i = 0; i < numLibros; i++) {
+            if (libros[i].isbn == isbn) {
+                return &libros[i];
+            }
+        }
+        return nullptr;
+    }
+
+    Libro* buscarLibroMasCostoso() {
+        if (numLibros == 0) return 0;
+
+        Libro* masCostoso = &libros[0];
+        for (int i = 1; i < numLibros; i++) {
+            if (libros[i].precioVenta > masCostoso->precioVenta) {
+                masCostoso = &libros[i];
+            }
+        }
+        return masCostoso;
+    }
+
+    Libro* buscarLibroMenosCostoso() {
+        if (numLibros == 0) return 0;
+
+        Libro* menosCostoso = &libros[0];
+        for (int i = 1; i < numLibros; i++) {
+            if (libros[i].precioVenta < menosCostoso->precioVenta) {
+                menosCostoso = &libros[i];
+            }
+        }
+        return menosCostoso;
+    }
+
+    Libro* buscarLibroMasVendido() {
+        if (numLibros == 0) return 0;
+
+        Libro* masVendido = &libros[0];
+        for (int i = 1; i < numLibros; i++) {
+            if (libros[i].cantidadVendida > libros[i+1].cantidadVendida) {
+                masVendido = &libros[i];
+            }
+        }
+        return masVendido;
+    }
+};
+
+class CircuitBreaker {
+public:
+    bool estaAbierto;
+    int limiteTransacciones;
+
+    CircuitBreaker() {
+        estaAbierto = false;
+        limiteTransacciones = 100;
+    }
+
+    void checkEstado(int numTransacciones, int dineroEnCaja) {
+        if (numTransacciones >= limiteTransacciones && dineroEnCaja < 0) {
+            estaAbierto = true;
+            cout << "Se alcanzó el límite de transacciones. Circuit Breaker activado." << endl;
+        }
+    }
+};
+
+int main() {
+	CircuitBreaker circuitBreaker;
+    Catalogo catalogo;
+    int dineroEnCaja = inversion, isbn = 1000;
+
+    while (true) {
+        circuitBreaker.checkEstado(numTransaccion, dineroEnCaja);
+        cout << "\t\t\t\tBIENVENIDO\n" << "Dinero: $" << dineroEnCaja << endl;
+        cout << "\t1. Registrar un libro en el catalogo" << endl;
+        cout << "\t2. Eliminar un libro del catálogo" << endl;
+        cout << "\t3. Buscar un libro" << endl;
+        cout << "\t4. Abastecer libros" << endl;
+        cout << "\t5. Vender libros" << endl;
+        cout << "\t6. Filtro" << endl;
+        cout << "\t7. Salir" << endl;
+        cout << "Elija una opcion: ";
 	
-	cout << "Desea volver al menu de inicio\n" << "\t1.volver\n" << "\t2.salir" << endl;
-	cin >> salir;
-	system("cls");
-	} while ( salir == 1);
+        int opcion;
+        cin >> opcion;
+		system("clear");
+        switch (opcion) {
+            case 1: {
+            	cout << "\t\t\t\tAGREGAR" << endl;
+                int precioCompra, precioVenta;
+                string titulo;
 
+                cout << "\tTitulo: ";
+                	cin.get();
+                	getline(cin, titulo);
+                cout << "\tPrecio de Compra: $";
+                	cin >> precioCompra;
+                cout << "\tPrecio de Venta: $";
+                	cin >> precioVenta;
+                if (circuitBreaker.estaAbierto) {
+                cout << "No se pueden agregar más libros, el circuit breaker está activado." << endl;
+                break;
+            	} else{
+                Libro libro(isbn, titulo, precioCompra, precioVenta);
+                catalogo.agregarLibro(libro);
+				isbn++;
+                cout << "\tLibro registrado en el catalogo." << endl;
+                }
+               	cin.get();
+                system("clear");
+			    break;
+            }
+            case 2: {
+            	cout << "\t\t\t\tELIMINAR" << endl;
+                int id;
+                cout << "\tISBN del libro a eliminar: ";
+                cin >> id;
 
+                catalogo.eliminarLibro(id);
+                cout << "\tLibro eliminado del catalogo." << endl;
+                break;
+                cin.get();
+                system("clear");
+            }
+            case 3: {
+            	cout << "\t\t\t\tBUSQUEDA" << endl;
+            	int choose;
+            	cout << "\tBuscar por: \n" << "\t\t1.titulo\n" << "\t\t2.ISBN\n" << endl;
+            	cin >> choose;
+	            	if (choose == 1){
+		                string titulo;
+		                	cout << "\tTítulo del libro a buscar: ";
+		                	cin.get();
+		                	getline(cin, titulo);
+		
+		                	Libro* encontrado = catalogo.buscarPorTitulo(titulo);
+			                	if (encontrado != 0) {
+			                    	encontrado->mostrarInfo();
+			                	} else {
+			                    	cout << "\tLibro no encontrado." << endl;
+			                	}
+		        	}else if (choose == 2){
+		                int id;
+		                	cout << "\tISBN del libro a buscar: ";
+		                	cin >> id;
+		
+		                	Libro* encontrado = catalogo.buscarPorISBN(id);
+		                		if (encontrado != 0) {
+		                    		encontrado->mostrarInfo();
+		                		} else {
+		                    		cout << "\tLibro no encontrado." << endl;
+		                		}
+	          		}
+	          	cin.get();
+                system("clear");
+                break;
+			}
+            case 4: {
+            	cout << "\t\t\t\tABASTECER" << endl;
+                int isbn, cantidad;
+                cout << "\tISBN del libro: ";
+                cin >> isbn;
+                cout << "\tCantidad a abastecer: ";
+                cin >> cantidad;
+
+                Libro* encontrado = catalogo.buscarPorISBN(isbn);
+                if (encontrado != 0) {
+                    encontrado->abastecer(cantidad, dineroEnCaja);
+                    cout << cantidad << " ejemplares abastecidos." << endl;
+                } else {
+                    cout << "\tLibro no encontrado." << endl;
+                }
+	          	cin.get();
+                system("clear");
+                break;
+            }
+            case 5: {
+            	cout << "\t\t\t\tVENDER" << endl;
+                int isbn, cantidad;
+                cout << "\tISBN del libro: ";
+                cin >> isbn;
+                cout << "\tCantidad a vender: ";
+                cin >> cantidad;
+                
+				Libro* encontrado = catalogo.buscarPorISBN(isbn);
+                if (encontrado != 0) {
+                    if (encontrado->vender(cantidad, dineroEnCaja)) {
+                        int ganancias = cantidad * encontrado->precioVenta;
+                        dineroEnCaja += ganancias;
+                        cout << cantidad << " ejemplares vendidos. Ganancias: $" << ganancias << endl;
+                    } else {
+                        cout << "\tNo hay suficientes ejemplares para la venta." << endl;
+                    }
+                } else {
+                    cout << "\tLibro no encontrado." << endl;
+                }
+	          	cin.get();
+                system("clear");                
+                break;
+            }
+            case 6: {
+            	cout << "\t\t\t\tFiltro" << endl;
+            	int choose;
+				cout << "\t1.Buscar el libro mas costoso\n" << "\t2. Buscar el libro menos costoso\n" << "\t3. Buscar el libro mas vendido\n" << endl;
+				cin >> choose;
+	                if (choose == 1){
+		                Libro* masCostoso = catalogo.buscarLibroMasCostoso();
+			                if (masCostoso != 0) {
+			                    cout << "\tLibro más costoso:" << endl;
+			                    masCostoso->mostrarInfo();
+			                } else {
+			                    cout << "\tNo hay libros registrados en el catalogo." << endl;
+			                }
+		        	}else if (choose == 2){
+		                Libro* menosCostoso = catalogo.buscarLibroMenosCostoso();
+			                if (menosCostoso != 0) {
+			                    cout << "\tLibro menos costoso:" << endl;
+			                    menosCostoso->mostrarInfo();
+			                } else {
+			                    cout << "\tNo hay libros registrados en el catalogo." << endl;
+			                }
+		        	}else if (choose == 3){
+		                Libro* masVendido = catalogo.buscarLibroMasVendido();
+			                if (masVendido != 0) {
+			                    cout << "\tLibro más vendido:" << endl;
+			                    masVendido->mostrarInfo();
+			                } else {
+			                    cout << "\tNo hay libros registrados en el catalogo." << endl;
+			           		}
+		            } else {
+		            	cout << "\tOpcion no valida" << endl;
+		            }
+	                cin.get();
+	                system("clear");
+	                break;
+	    	}
+            case 7: {
+                cout << "\tSaliendo del programa." << endl;
+                return 0;
+            }
+            default:
+                cout << "\tOpcion no valida. Intente de nuevo." << endl;
+        }
+    }
     return 0;
 }
